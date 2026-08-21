@@ -4,18 +4,16 @@ import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
+import org.hibernate.annotations.CreationTimestamp;
 
 import java.time.LocalDateTime;
 
-@Getter
-@Setter
 @Entity
 @Table(name = "user_login_histories")
+@Getter @Setter
 public class UserLoginHistory {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id")
     private Integer id;
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -23,7 +21,8 @@ public class UserLoginHistory {
     @JsonBackReference
     private User user;
 
-    @Column(name = "login_time", columnDefinition = "DATETIME DEFAULT CURRENT_TIMESTAMP")
+    @CreationTimestamp
+    @Column(name = "login_time", nullable = false, updatable = false)
     private LocalDateTime loginTime;
 
     @Column(name = "ip_address", length = 45)

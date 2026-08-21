@@ -1,0 +1,33 @@
+services:
+  postgres:
+    image: postgres:17
+    container_name: postgres-promotion
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: promotion
+      POSTGRES_USER: kid4211
+      POSTGRES_PASSWORD: "12345678"
+      TZ: Asia/Seoul
+    ports:
+      - "5432:5432"
+    volumes:
+      - ./data/postgres:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U kid4211 -d promotion"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+  redis:
+    image: redis:7
+    container_name: redis-promotion
+    ports:
+      - "6379:6379"
+    volumes:
+      - ./redis-config:/usr/local/etc/redis
+    command: redis-server /usr/local/etc/redis/redis.conf
+    networks:
+      - promotion_network
+
+networks: # 네트워크 정의 추가
+  promotion_network:
+    driver: bridge

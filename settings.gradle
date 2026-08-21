@@ -2,3 +2,4 @@ rootProject.name = 'promotion-project'
 
 include 'discovery-service'
 include 'user-service'
+include 'api-gateway'
