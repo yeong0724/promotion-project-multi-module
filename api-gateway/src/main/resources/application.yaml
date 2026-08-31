@@ -10,6 +10,13 @@ spring:
       port: 6379
   cloud:
     gateway:
+      default-filters:
+        - name: RequestRateLimiter
+          args:
+            redis-rate-limiter.replenishRate: 10  # 초당 채워지는 제한토큰 개수
+            redis-rate-limiter.burstCapacity: 20
+            redis-rate-limiter.requestedTokens: 1
+            key-resolver: "#{@userKeyResolver}"
       routes:
         - id: public-user-service
           uri: lb://USER-SERVICE
@@ -21,9 +28,42 @@ spring:
                   - /api/v1/users/login
                   - /api/v1/users/validate-token
                   - /api/v1/users/refresh-token
+          filters:
+            - name: CircuitBreaker # 통신에 문제가 생겼을 경우에 동작
+              args:
+                name: userServiceBreaker
+                fallbackUri: forward:/fallback/users # 해당 url로 라우팅이 된다.
         - id: user-service
           uri: lb://USER-SERVICE
           predicates:
             - Path=/api/v1/users/**
           filters:
+            - name: CircuitBreaker # 통신에 문제가 생겼을 경우에 동작
+              args:
+                name: userServiceBreaker
+                fallbackUri: forward:/fallback/users # 해당 url로 라우팅이 된다.
             - name: JwtAuthenticationFilter
+
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:8761/eureka/
+    register-with-eureka: true
+    fetch-registry: true
+
+resilience4j:
+  circuitbreaker:
+    instances:
+      userServiceBreaker:
+        registerHealthIndicator: true
+        slidingWindowSize: 5                               # 서킷 브레이커가 고려할 최근 호출 수
+        minimumNumberOfCalls: 10                           # 최소 호출 횟수, 이 수를 넘어야 서킷 브레이커의 상태가 변경됨
+        permittedNumberOfCallsInHalfOpenState: 10          # 반-열린 상태에서 허용되는 호출 수
+        automaticTransitionFromOpenToHalfOpenEnabled: true # 서킷 브레이커가 자동으로 반-열린 상태로 전환되는지 여부
+        waitDurationInOpenState: 5000                      # 서킷 브레이커가 열린 상태로 유지되는 시간
+        failureRateThreshold: 50                           # 실패율 기준, 이 비율을 초과하는 실패가 발생하면 서킷 브레이커가 열립니다
+        eventConsumerBufferSize: 10
+        record-exceptions:
+          - java.util.concurrent.TimeoutException
+          - org.springframework.cloud.gateway.support.NotFoundException
+          - io.github.resilience4j.circuitbreaker.CallNotPermittedException
