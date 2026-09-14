@@ -46,7 +46,7 @@ public class CouponService {
      *  분산 환경에서 여러 서버가 동시에 쿠폰을 발급할 경우, DB 레벨의 락만으로는 정확한 수량 제어가 어려움
      */
     @Transactional
-    // @CouponMetered(version = "v1")
+    @CouponMetered(version = "v1")
     public Coupon issueCoupon(CouponDto.IssueRequest issueRequest) {
         CouponPolicy couponPolicy = couponPolicyRepository.findByIdWithLock(issueRequest.getCouponPolicyId())
                 .orElseThrow(() -> new CouponIssueException("쿠폰 정책을 찾을 수 없습니다."));
