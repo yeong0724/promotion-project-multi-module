@@ -1,4 +1,4 @@
-package com.jinyeong.couponservice.controller.v2;
+package com.jinyeong.couponservice.controller.v3;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.jinyeong.couponservice.dto.v2.CouponPolicyDto;
@@ -10,8 +10,8 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.stream.Collectors;
 
-@RestController("couponPolicyControllerV2")
-@RequestMapping("/api/v2/coupon-policies")
+@RestController("couponPolicyControllerV3")
+@RequestMapping("/api/v3/coupon-policies")
 @RequiredArgsConstructor
 public class CouponPolicyController {
 
@@ -35,3 +35,4 @@ public class CouponPolicyController {
                 .collect(Collectors.toList()));
     }
 }
+

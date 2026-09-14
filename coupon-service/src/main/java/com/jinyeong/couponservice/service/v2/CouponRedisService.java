@@ -40,11 +40,10 @@ public class CouponRedisService {
 
         /**
          * [RLock]
-         *  - Redis에서 제공하는 락 구현체로 Redisson의 분산 락
+         *  - Redis Rock을 사용해서 분산 락 적용
+         *  - Redis에서 제공하는 Rock 구현체로 Redisson의 분산 락
          *  - LOCK_WAIT_TIME: 락을 못 잡으면 최대 3초 대기, 그 안에 못 잡으면 false 반환
          *  - LOCK_LEASE_TIME: 락 획득 후 5초가 지나면 자동 해제. 프로세스가 죽어도 락이 영원히 남지 않게 하는 안전장치
-         *
-         *  -
          */
         RLock rLock = redissonClient.getLock(lockKey);
 

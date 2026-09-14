@@ -3,7 +3,7 @@ package com.jinyeong.couponservice.service.v2;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jinyeong.couponservice.domain.CouponPolicy;
-import com.jinyeong.couponservice.dto.v1.CouponPolicyDto;
+import com.jinyeong.couponservice.dto.v2.CouponPolicyDto;
 import com.jinyeong.couponservice.exception.CouponPolicyNotFoundException;
 import com.jinyeong.couponservice.repository.CouponPolicyRepository;
 import lombok.RequiredArgsConstructor;
